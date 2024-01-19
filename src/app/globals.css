@@ -85,23 +85,42 @@ body {
   overflow-x: hidden;
 }
 
+
 body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   color: rgb(var(--foreground-rgb));
+  min-height: 100dvh;
   background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
+    to bottom,
+    transparent,
+    rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
   }
-}
+  
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    html {
+      color-scheme: dark;
+    }
+  }
+  
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    flex-grow: 1;
+    max-width: 1280px;
+    min-width: 320px;
+    align-items: center;
+    background-color: #242424;
+    width: 100%;
+    text-align: center;
+  }
