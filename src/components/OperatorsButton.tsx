@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 import styled from "styled-components";
 import Image from "next/image";
-import arrow from '../assets/Arrow.svg';
+import arrow from '@/assets/Arrow.svg';
 
 const StyledBtn = styled(motion.button)`
   display: flex;

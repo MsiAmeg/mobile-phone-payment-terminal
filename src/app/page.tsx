@@ -1,4 +1,4 @@
-import { StyledH1 } from "../components/Styled";
+import { StyledH1 } from "@/components/Styled";
 
 import OperatorsSections from "@/components/OperatorsSections";
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence } from 'framer-motion';
 
 import styled from "styled-components";
 import OperatorsButton from "./OperatorsButton";
@@ -26,7 +27,9 @@ export default function OperatorsSections() {
   return (
     <StyledSection>
       <OperatorsButton opened={opened} onClick={handleOpen} />
-      {opened && <OperatorsGrid />}
+      <AnimatePresence>
+        {opened && <OperatorsGrid />}
+      </AnimatePresence>
     </StyledSection>
   )
 }

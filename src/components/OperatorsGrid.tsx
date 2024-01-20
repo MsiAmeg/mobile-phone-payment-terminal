@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useRootStore } from "@/store/rootStore";
 
-import { OperatorT, operators } from '../constants/operators';
-import { StyledImage } from "./Styled";
+import { OperatorT, operators } from '@/constants/operators';
+import { StyledImage } from "@/components/Styled";
 
 import styled from "styled-components";
 
@@ -50,15 +50,16 @@ const container = {
     transition: {
       staggerChildren: 0.05
     },
-    exit: {
-      scale: 0.9, opacity: 0
-    }
+  },
+  exit: {
+    scale: 0.9, opacity: 0,
   }
 }
 
 const item = {
   hidden: { scale: 0.7, y: 20, opacity: 0 },
-  show: { scale: 1, y: 0, opacity: 1 }
+  show: { scale: 1, y: 0, opacity: 1 },
+  exit: { opacity: 0 }
 }
 
 
