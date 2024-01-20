@@ -77,7 +77,7 @@ const StyledSubmitBtn = styled(StyledBtn)<{$color: string, $backroundColor: stri
   max-width: 500px;
   align-self: center;
   width: 100%;
-  margin: auto 0 50px;
+  margin: auto 0 30px;
 `;
 
 export default function PaymentSection() {
@@ -99,8 +99,8 @@ export default function PaymentSection() {
           <StyledInput type="number" required min={1} max={1000} className="money" placeholder="От 1 до 1000 руб."/>
           <StyledError>Некорректный формат суммы</StyledError>
         </StyledLabel>
-        {operator && <StyledSubmitBtn $backroundColor={operator.color} $color={operator.textColor}>Подтвердить</StyledSubmitBtn>}
       </StyledForm>
+      {operator && <StyledSubmitBtn type="submit" $backroundColor={operator.color} $color={operator.textColor}>Подтвердить</StyledSubmitBtn>}
     </>
   )
 }
