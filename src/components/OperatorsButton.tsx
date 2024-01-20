@@ -21,10 +21,7 @@ const StyledBtn = styled(motion.button)`
   border: none;
 `;
 
-const StyledImage = motion(styled(Image)`
-
-`
-);
+const StyledArrow = motion(styled(Image)``);
 
 type OperatorsButtonT = {
   opened: boolean, 
@@ -40,7 +37,7 @@ export default function OperatorsButton({opened, onClick}: OperatorsButtonT) {
       transition={{duration: 0.25}}
     >
       Выбрать оператора
-      <StyledImage animate={{rotateX: opened ? "180deg" : 0 }} priority alt="arrow" src={arrow}/>
+      <StyledArrow animate={{rotateX: opened ? "180deg" : 0 }} priority alt="arrow" src={arrow}/>
     </StyledBtn>
   )
 }

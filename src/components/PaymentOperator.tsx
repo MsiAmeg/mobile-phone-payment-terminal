@@ -37,14 +37,14 @@ type PaymentOperatorT = {
 }
 
 export default function PaymentOperator({operator}: PaymentOperatorT) {
-
+  
   const articleRef = useRef(null);
 
   return (
     <StyledArticle $color={operator.color} $textColor={operator.textColor} ref={articleRef}>
-      <StyledWrapper initial={{x: 100}} animate={{x: 0}} className="moving-wrapper" drag="x" dragElastic={0} dragConstraints={articleRef}>
-          <StyledImage src={operator.image} alt={operator.title} />
-          {operator.title}
+      <StyledWrapper className="moving-wrapper" drag="x" dragElastic={0} dragConstraints={articleRef}>
+        <StyledImage src={operator.image} alt={operator.title} />
+        {operator.title}
       </StyledWrapper>
     </StyledArticle>
   )
