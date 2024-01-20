@@ -10,7 +10,7 @@ import { OperatorT } from "@/constants/operators";
 
 import styled from "styled-components";
 
-const StyledArticle = styled.article<{$color: string, $textColor: string}>`
+const StyledArticle = motion(styled.article<{$color: string, $textColor: string}>`
   position: relative;
   display: flex;
   width: 100%;
@@ -21,7 +21,7 @@ const StyledArticle = styled.article<{$color: string, $textColor: string}>`
   align-items: center;
   background-color: ${props => props.$color};
   color: ${props => props.$textColor};
-`;
+`);
 
 const StyledWrapper = motion(styled.div`
   cursor: pointer;
@@ -41,8 +41,8 @@ export default function PaymentOperator({operator}: PaymentOperatorT) {
   const articleRef = useRef(null);
 
   return (
-    <StyledArticle $color={operator.color} $textColor={operator.textColor} ref={articleRef}>
-      <StyledWrapper className="moving-wrapper" drag="x" dragElastic={0} dragConstraints={articleRef}>
+    <StyledArticle initial={{scale: 0.6, opacity: 0}} animate={{scale: 1, opacity: 1}} $color={operator.color} $textColor={operator.textColor} ref={articleRef}>
+      <StyledWrapper whileTap={{scale: 0.9}} whileHover={{scale: 0.96}} className="moving-wrapper" drag="x" dragElastic={0} dragConstraints={articleRef}>
         <StyledImage src={operator.image} alt={operator.title} />
         {operator.title}
       </StyledWrapper>

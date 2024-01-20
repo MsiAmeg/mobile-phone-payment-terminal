@@ -1,88 +1,78 @@
 "use client";
 
+import { AnimatePresence } from "framer-motion";
+
+import { useEffect, useState } from "react";
 import { useRootStore } from "@/store/rootStore";
 
-import { StyledBtn } from "./Styled";
+import { paymentCall } from "@/utils/fakeApi";
+import { StyledBalance, StyledError, StyledForm, StyledInput, StyledLabel, StyledSubmitBtn } from "./Styled";
 
 import PaymentOperator from "@/components/PaymentOperator";
-import styled from "styled-components";
-
-const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  max-width: 720px;
-  text-align: left;
-  height: 100%;
-`;
-
-const StyledBalance= styled.h3`
-  font-weight: normal;
-  font-size: 20px;
-  letter-spacing: 1px;
-  padding: 20px 0 30px;
-`;
-
-const StyledLabel = styled.label`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  font-size: 16px;
-  letter-spacing: 1px;
-`;
+import Popup from "@/components/Popup";
+import { useRouter } from "next/navigation";
 
 
-const StyledInput = styled.input`
-border: none;
-background: transparent;
-border-radius: 10px;
-font-size: 16px;
-letter-spacing: 1px;
-border-bottom: 1px solid #656565;
-padding: 0 10px 5px;
-transition: border-bottom 350ms ease-out;
-
-&:focus-visible {
-  outline: none;
+type inputT = {
+  phone: {
+    text: string;
+    validity: boolean;
+  };
+  money: {
+      text: string;
+      validity: boolean;
+  };
 }
-
-&:invalid:not(:focus) {
-  border-bottom: 1px solid #FF3030;
-}
-
-&:valid:not(:focus) {
-  border-bottom: 1px solid #007105;
-}
-
-&:invalid:not(:focus) ~ span {
-  visibility: visible;
-  opacity: 1;
-}
-`;
-
-const StyledError = styled.span`
-  color: #FF3030;
-  font-size: 12px;
-  letter-spacing: 1px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 350ms ease-out;
-`;
-
-const StyledSubmitBtn = styled(StyledBtn)<{$color: string, $backroundColor: string}>`
-  background-color: ${props => props.$backroundColor};
-  color: ${props => props.$color};
-  justify-content: center;
-  max-width: 500px;
-  align-self: center;
-  width: 100%;
-  margin: auto 0 30px;
-`;
 
 export default function PaymentSection() {
+
+  const router = useRouter();
+
+  const [input, setInput] = useState<inputT>({phone: {text: '', validity: false}, money: {text: '', validity: false}});
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setInput({...input, [e.target.name]: { text: e.target.value, validity: e.target.validity.valid}});
+  };
+
+  useEffect(() => {
+    if (input.money.validity && input.phone.validity) {
+      setIsFormValid(true);
+    }
+    else {
+      setIsFormValid(false);
+    }
+  }, [input])
+
+  const [popupOpened, setPopupOpened] = useState(false);
+  const [succes, setSucces] = useState(false);
+
   const operator = useRootStore(state => state.selectedOperator);
   const balance = useRootStore(state => state.balance);
+
+  const onClickHandler = async () => {
+    setIsFormValid(false);
+    setIsLoading(true);
+    paymentCall()
+      .then(() => {
+        const randBoolean: boolean = (Math.random() < 0.5)? true : false;
+
+        setPopupOpened(true);
+        setSucces(randBoolean);
+        if (randBoolean) {
+          setTimeout(() => {
+            router.push('/');
+          }, 1700);
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setTimeout(() => {
+          setPopupOpened(false);
+        }, 1500);
+      })
+  }
 
   return (
     <>
@@ -91,16 +81,22 @@ export default function PaymentSection() {
         <StyledBalance>Баланс: {balance} руб.</StyledBalance>
         <StyledLabel>
           Введите номер телефона
-          <StyledInput type="tel" required pattern="\d{11}" className="phone" placeholder="В формате 11 цифр" />
+          <StyledInput type="tel" required pattern="\d{11}" name="phone" placeholder="В формате 11 цифр" onChange={onInputChange} />
           <StyledError>Некорректный формат номера</StyledError>
         </StyledLabel>
         <StyledLabel >
           Введите сумму
-          <StyledInput type="number" required min={1} max={1000} className="money" placeholder="От 1 до 1000 руб."/>
+          <StyledInput type="number" required min={1} max={1000} name="money" placeholder="От 1 до 1000 руб." onChange={onInputChange}/>
           <StyledError>Некорректный формат суммы</StyledError>
         </StyledLabel>
       </StyledForm>
-      {operator && <StyledSubmitBtn type="submit" $backroundColor={operator.color} $color={operator.textColor}>Подтвердить</StyledSubmitBtn>}
+      <AnimatePresence>
+        {popupOpened && <Popup succes={succes} />}
+      </AnimatePresence>
+      {operator && 
+        <StyledSubmitBtn initial={{scale: 0}} animate={{scale: 1}} whileHover={{scale: isFormValid? 1.05 : 1}} whileTap={{scale: 0.96}} onClick={onClickHandler} disabled={!isFormValid} type="submit" $backroundColor={operator.color} $color={operator.textColor}>
+          {isLoading? "Загрузка..." : "Подтвердить"}
+        </StyledSubmitBtn>}
     </>
   )
 }
