@@ -42,7 +42,7 @@ export const StyledImage = styled.img`
   padding: 0;
 `;
 
-export const StyledForm = styled.form`
+export const StyledForm = motion(styled.form`
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -51,7 +51,7 @@ export const StyledForm = styled.form`
   text-align: left;
   height: 100%;
   flex-grow: 2;
-`;
+`);
 
 export const StyledBalance= styled.h3`
   font-weight: normal;
@@ -68,40 +68,36 @@ export const StyledLabel = styled.label`
   letter-spacing: 1px;
 `;
 
-export const StyledInput = styled.input`
+export const StyledInput = styled.input<{$isValid: boolean}>`
 border: none;
 background: transparent;
 border-radius: 10px;
 font-size: 16px;
 letter-spacing: 1px;
 border-bottom: 1px solid #656565;
-padding: 0 10px 5px;
+padding: 5px 10px 5px;
 transition: border-bottom 350ms ease-out;
 
 &:focus-visible {
   outline: none;
 }
 
-&:invalid:not(:focus) {
-  border-bottom: 1px solid #FF3030;
+&:focus ~ span {
+  visibility: hidden;
+  opacity: 0;
 }
 
-&:valid:not(:focus) {
-  border-bottom: 1px solid #007105;
-}
-
-&:invalid:not(:focus) ~ span {
-  visibility: visible;
-  opacity: 1;
+&:not(:focus) {
+  border-bottom: 1px solid ${props => props.$isValid? '#007105' : '#FF3030'};
 }
 `;
 
-export const StyledError = styled.span`
+export const StyledError = styled.span<{$visibility: boolean}>`
   color: #FF3030;
   font-size: 12px;
   letter-spacing: 1px;
-  opacity: 0;
-  visibility: hidden;
+  opacity: ${props => props.$visibility? '1' : '0'};
+  visibility: ${props => props.$visibility? 'visible' : 'hidden'};
   transition: opacity 350ms ease-out;
 `;
 

@@ -11,6 +11,8 @@ import { AnimatePresence } from "framer-motion";
 import { OperatorT } from "@/constants/operators";
 import { useRouter } from "next/navigation";
 
+import { maskMoney, maskNumber } from "@/utils/masks";
+
 import Popup from "./Popup";
 
 type inputT = {
@@ -41,11 +43,31 @@ export default function PaymentForm({operator}:PaymentFormT) {
 
   
   const balance = useRootStore(state => state.balance);
-  
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput({...input, [e.target.name]: { text: e.target.value, validity: e.target.validity.valid}});
+
+  const isMoneyValid = (value: number):boolean => {
+    if (value >= 1 && value <= 1000) {
+      return true;
+    }
+    return false;
+  }
+
+  const onPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const trimedValue = e.target.value.toLowerCase().replace(/\D/g, "");
+
+    maskNumber(e, trimedValue, input.phone.text);
+    setInput({...input, phone: { text: trimedValue, validity: /^\d{11}$/g.test(trimedValue)}});
   };
 
+  const onMoneyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+    const trimedValue = e.target.value
+      .toLowerCase()
+      .replace('руб.', '')
+      .replace(/[^\d\.\,]/g, "").replace(',', '.');
+    
+    maskMoney(e, trimedValue, input.money.text);
+    setInput({...input, money: { text: parseFloat(trimedValue).toFixed(2), validity: isMoneyValid(Number(trimedValue))}});
+  };
 
   const redirectOnSucces = () => {
     router.push('/');
@@ -56,17 +78,16 @@ export default function PaymentForm({operator}:PaymentFormT) {
     setIsLoading(true);
     paymentCall()
       .then(() => {
-        const randBoolean: boolean = (Math.random() < 0.5)? true : false;
-
-        setPopupOpened(true);
-        setSucces(randBoolean);
-        if (randBoolean) {
-          setTimeout(() => {
-            redirectOnSucces();
-          }, 1700);
-        }
+        setSucces(true);
+        setTimeout(() => {
+          redirectOnSucces();
+        }, 1700);
+      })
+      .catch(() => {
+        setSucces(false);
       })
       .finally(() => {
+        setPopupOpened(true);
         setIsLoading(false);
         setTimeout(() => {
           setPopupOpened(false);
@@ -81,22 +102,23 @@ export default function PaymentForm({operator}:PaymentFormT) {
     else {
       setIsFormValid(false);
     }
+    console.log(input);
   }, [input])
 
 
   return (
     <>
-    <StyledForm>
+    <StyledForm initial={{opacity: 0}} animate={{opacity: 1}}>
       <StyledBalance>Баланс: {balance} руб.</StyledBalance>
       <StyledLabel>
         Введите номер телефона
-        <StyledInput type="tel" required pattern="\d{11}" name="phone" placeholder="В формате 11 цифр" onChange={onInputChange} />
-        <StyledError>Некорректный формат номера</StyledError>
+        <StyledInput $isValid={input.phone.validity} type="tel" required pattern="\+ \d \(\d{3}\) \d{3}-\d{2}-\d{2}|\+ \d{11}" name="phone" placeholder="В формате 11 цифр" onChange={onPhoneChange} maxLength={19} />
+        <StyledError $visibility={!input.phone.validity}>Некорректный формат номера</StyledError>
       </StyledLabel>
-      <StyledLabel >
+      <StyledLabel>
         Введите сумму
-        <StyledInput type="number" required min={1} max={1000} name="money" placeholder="От 1 до 1000 руб." onChange={onInputChange}/>
-        <StyledError>Некорректный формат суммы</StyledError>
+        <StyledInput $isValid={input.money.validity} type="tel" required step='any' min={1} max={1000} name="money" placeholder="От 1 до 1000 руб." onChange={onMoneyChange}/>
+        <StyledError $visibility={!input.money.validity}>Некорректный формат суммы</StyledError>
       </StyledLabel>
       <StyledSubmitBtn initial={{scale: 0}} animate={{scale: 1}} whileHover={{scale: isFormValid? 1.05 : 1}} whileTap={{scale: 0.96}} onClick={onClickHandler} disabled={!isFormValid} type="submit" $backroundColor={operator.color} $color={operator.textColor}>
         {isLoading? "Загрузка..." : "Подтвердить"}
