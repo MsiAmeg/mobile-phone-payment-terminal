@@ -50,6 +50,7 @@ export const StyledForm = styled.form`
   max-width: 720px;
   text-align: left;
   height: 100%;
+  flex-grow: 2;
 `;
 
 export const StyledBalance= styled.h3`

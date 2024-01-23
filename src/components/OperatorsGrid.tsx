@@ -69,7 +69,7 @@ export default function OperatorsGrid() {
 
   const onItemClick = (operator: OperatorT) => {
     setOperator(operator);
-    router.push('/payment');
+    router.push(`/${operator.id}`);
   }
   return (
     <StyledList variants={container} initial="hidden" animate="show" exit="exit" transition={{duration: 0.35}}>
